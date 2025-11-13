@@ -34,9 +34,15 @@ export default function Login() {
     setError('');
 
     try {
-      await authService.login(email, password);
+      const user = await authService.login(email, password);
+      console.log('Login successful, user role:', user.role);
+      
+      // Small delay to ensure user state is updated
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       navigate('/dashboard');
     } catch (err: any) {
+      console.error('Login error:', err);
       setError(err.message || 'Invalid email or password. Please try again.');
     }
   };
@@ -46,20 +52,33 @@ export default function Login() {
     const demoUser = demoUsers.find(u => u.email === demoEmail);
     const demoPassword = demoUser?.password || 'demo123';
     setPassword(demoPassword);
+    setError('');
     
     try {
-      await authService.login(demoEmail, demoPassword);
+      const user = await authService.login(demoEmail, demoPassword);
+      console.log('Login successful, user role:', user.role);
+      
+      // Small delay to ensure user state is updated
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       navigate('/dashboard');
     } catch (err: any) {
+      console.error('Login error:', err);
       // If user doesn't exist, try to create it
       if (err.message?.includes('user-not-found') || err.message?.includes('invalid-credential')) {
         setCreatingDemoUsers(true);
         try {
           await createDemoUsers();
           // Try login again
-          await authService.login(demoEmail, demoPassword);
+          const user = await authService.login(demoEmail, demoPassword);
+          console.log('Login after creation successful, user role:', user.role);
+          
+          // Small delay to ensure user state is updated
+          await new Promise(resolve => setTimeout(resolve, 100));
+          
           navigate('/dashboard');
         } catch (createErr: any) {
+          console.error('Create and login error:', createErr);
           setError(createErr.message || 'Failed to create demo user. Please try registering manually.');
         } finally {
           setCreatingDemoUsers(false);

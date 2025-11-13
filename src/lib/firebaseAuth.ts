@@ -68,8 +68,19 @@ class FirebaseAuthService {
       }
 
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      
+      // Map Firebase user to app user (this loads role from Firestore)
       const user = await this.mapFirebaseUser(userCredential.user);
-      if (!user) throw new Error('Failed to create user object');
+      if (!user) {
+        throw new Error('Failed to create user object');
+      }
+      
+      // Ensure user is cached
+      this.currentUser = user;
+      
+      // Log for debugging
+      console.log('Login successful:', { email, role: user.role, id: user.id });
+      
       return user;
     } catch (error: any) {
       let errorMessage = 'Login failed';
@@ -188,16 +199,39 @@ class FirebaseAuthService {
   }
 
   getCurrentUser(): User | null {
+    // Return cached user if available
     if (this.currentUser) {
       return this.currentUser;
     }
 
+    // If no cached user, try to get from Firebase Auth
     const firebaseUser = auth.currentUser;
     if (firebaseUser) {
-      void this.mapFirebaseUser(firebaseUser);
+      // Try to load user data synchronously from cache first
+      // This will be updated asynchronously
+      const fallbackUser: User = {
+        id: firebaseUser.uid,
+        email: firebaseUser.email || '',
+        name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
+        role: 'patient', // Default role until Firestore loads
+        avatar: firebaseUser.photoURL || undefined,
+      };
+      
+      // Load from Firestore asynchronously and update
+      this.mapFirebaseUser(firebaseUser).then((user) => {
+        if (user) {
+          this.currentUser = user;
+        }
+      }).catch((error) => {
+        console.error('Error loading user data:', error);
+      });
+      
+      // Return fallback user immediately
+      this.currentUser = fallbackUser;
+      return fallbackUser;
     }
 
-    return this.currentUser;
+    return null;
   }
 
   isAuthenticated(): boolean {

@@ -7,21 +7,62 @@ import { Button } from '@/components/ui/button';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
 import { TrendingUp, Users, AlertTriangle, Activity, Plus, FileText, Brain, Mic } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { User } from '@/lib/types';
 
 export default function Dashboard() {
-  const user = authService.getCurrentUser();
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const chartData = generateMockChartData();
 
+  useEffect(() => {
+    // Get initial user
+    const currentUser = authService.getCurrentUser();
+    setUser(currentUser);
+    setLoading(false);
+
+    // Subscribe to auth state changes to get updated user with role
+    const unsubscribe = authService.onAuthStateChanged((updatedUser) => {
+      console.log('Dashboard: User updated', updatedUser);
+      setUser(updatedUser);
+      setLoading(false);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  // Show loading state
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="p-6 flex items-center justify-center min-h-[400px]">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  // Redirect to login if no user
+  if (!user) {
+    navigate('/login');
+    return null;
+  }
+
   // Filter patients based on role
-  const patients = user?.role === 'doctor' 
+  const patients = user.role === 'doctor' 
     ? mockPatients 
-    : mockPatients.filter(p => p.id === user?.id || p.assignedCaregiver === user?.id);
+    : user.role === 'caregiver'
+    ? mockPatients.filter(p => p.assignedCaregiver === user.id)
+    : mockPatients.filter(p => p.id === user.id);
 
   const highRiskPatients = patients.filter(p => p.riskLevel === 'high' || p.riskLevel === 'critical');
-  const averageRisk = Math.round(patients.reduce((acc, p) => acc + p.riskScore, 0) / patients.length);
+  const averageRisk = patients.length > 0 
+    ? Math.round(patients.reduce((acc, p) => acc + p.riskScore, 0) / patients.length)
+    : 0;
 
-  if (user?.role === 'patient') {
+  // Patient view
+  if (user.role === 'patient') {
     const patientData = mockPatients.find(p => p.id === user.id) || mockPatients[0];
     
     return (
