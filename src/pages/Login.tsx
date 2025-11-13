@@ -136,59 +136,71 @@ export default function Login() {
             </span>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-3">
             <Button
               variant="outline"
-              className="w-full justify-start"
+              className="w-full justify-start h-auto min-h-[80px] py-4 px-4 hover:bg-accent/50 transition-colors"
               onClick={() => quickLogin('doctor@neurocare.demo')}
               disabled={creatingDemoUsers}
             >
-              <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary font-semibold text-sm">
+              <div className="flex items-center gap-4 w-full">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary font-semibold text-base shrink-0">
                   D
                 </div>
-                <div className="text-left flex-1">
-                  <div className="font-medium">Doctor Account</div>
-                  <div className="text-xs text-muted-foreground">doctor@neurocare.demo</div>
-                  <div className="text-xs text-muted-foreground">Password: demo123</div>
+                <div className="text-left flex-1 space-y-1">
+                  <div className="font-semibold text-base">Doctor Account</div>
+                  <div className="text-sm text-muted-foreground">doctor@neurocare.demo</div>
+                  <div className="text-xs text-muted-foreground font-mono">Password: demo123</div>
                 </div>
-                {creatingDemoUsers && <Loader2 className="h-4 w-4 animate-spin" />}
+                {creatingDemoUsers && (
+                  <div className="shrink-0">
+                    <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                  </div>
+                )}
               </div>
             </Button>
             <Button
               variant="outline"
-              className="w-full justify-start"
+              className="w-full justify-start h-auto min-h-[80px] py-4 px-4 hover:bg-accent/50 transition-colors"
               onClick={() => quickLogin('caregiver@neurocare.demo')}
               disabled={creatingDemoUsers}
             >
-              <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary font-semibold text-sm">
+              <div className="flex items-center gap-4 w-full">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary font-semibold text-base shrink-0">
                   C
                 </div>
-                <div className="text-left flex-1">
-                  <div className="font-medium">Caregiver Account</div>
-                  <div className="text-xs text-muted-foreground">caregiver@neurocare.demo</div>
-                  <div className="text-xs text-muted-foreground">Password: demo123</div>
+                <div className="text-left flex-1 space-y-1">
+                  <div className="font-semibold text-base">Caregiver Account</div>
+                  <div className="text-sm text-muted-foreground">caregiver@neurocare.demo</div>
+                  <div className="text-xs text-muted-foreground font-mono">Password: demo123</div>
                 </div>
-                {creatingDemoUsers && <Loader2 className="h-4 w-4 animate-spin" />}
+                {creatingDemoUsers && (
+                  <div className="shrink-0">
+                    <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                  </div>
+                )}
               </div>
             </Button>
             <Button
               variant="outline"
-              className="w-full justify-start"
+              className="w-full justify-start h-auto min-h-[80px] py-4 px-4 hover:bg-accent/50 transition-colors"
               onClick={() => quickLogin('patient@neurocare.demo')}
               disabled={creatingDemoUsers}
             >
-              <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary font-semibold text-sm">
+              <div className="flex items-center gap-4 w-full">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary font-semibold text-base shrink-0">
                   P
                 </div>
-                <div className="text-left flex-1">
-                  <div className="font-medium">Patient Account</div>
-                  <div className="text-xs text-muted-foreground">patient@neurocare.demo</div>
-                  <div className="text-xs text-muted-foreground">Password: demo123</div>
+                <div className="text-left flex-1 space-y-1">
+                  <div className="font-semibold text-base">Patient Account</div>
+                  <div className="text-sm text-muted-foreground">patient@neurocare.demo</div>
+                  <div className="text-xs text-muted-foreground font-mono">Password: demo123</div>
                 </div>
-                {creatingDemoUsers && <Loader2 className="h-4 w-4 animate-spin" />}
+                {creatingDemoUsers && (
+                  <div className="shrink-0">
+                    <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                  </div>
+                )}
               </div>
             </Button>
           </div>
